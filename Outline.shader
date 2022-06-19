@@ -2,12 +2,8 @@ Shader "Custom/Outline"
 {
     Properties
     {
-        _Color("Color", Color) = (1.0, 1.0, 1.0, 1.0)
-        _Smoothness("Smoothness", Range(0, 1)) = 0.5
-        _Metallic("Metallic", Range(0, 1)) = 0.0
-
         _OutlineColor("Outline Color", Color) = (0.0, 0.0, 0.0, 1.0)
-        _OutlineWidth("Outline Width", Range(0, 0.2)) = 0.01
+        _OutlineWidth("Outline Width", Range(0.0, 0.2)) = 0.01
 
     }
 
@@ -17,30 +13,7 @@ Shader "Custom/Outline"
         {
             "RenderType" = "Opaque"
         }
-
-        CGPROGRAM
-
-        #pragma surface surf Standard fullforwardshadows
-
-        struct Input
-        {
-            float4 color : COLOR;
-        };
-
-        half4 _Color;
-        half _Smoothness;
-        half _Metallic;
-
-        void surf(float4 color : COLOR, inout SurfaceOutputStandard o)
-        {
-            o.Albedo = _Color.rgb * color.rgb;
-            o.Smoothness = _Smoothness;
-            o.Metallic = _Metallic;
-            o.Alpha = _Color.a * color.a;
-        }
-
-        ENDCG
-
+        
         Pass
         {
             Cull Front
