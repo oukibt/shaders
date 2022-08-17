@@ -20,8 +20,6 @@ Shader "Custom/Burning"
         {
             CGPROGRAM
 
-            #pragma multi_compile_instancing
-
             #pragma vertex vert
             #pragma fragment frag
  
