@@ -2,9 +2,9 @@ Shader "Custom/Grain"
 {
     Properties
     {
-        _MainTex("Texture", 2D) = "black"
+        _MainTex("Texture", 2D) = "black" {}
         _NoiseScale("Noise Scale", Float) = -100.0
-        _Strength("Noise Strength", Range(0.0, 1.0)) = 0.03
+        _Strength("Noise Strength", Float) = 0.03
     }
 
     SubShader

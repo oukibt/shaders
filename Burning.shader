@@ -2,14 +2,15 @@ Shader "Custom/Burning"
 {
     Properties
     {
-        _MainTex ("Main texture", 2D) = "white" {}
-        _DissolveTex ("Dissolution texture", 2D) = "gray" {}
-        _Strength ("Strength", Range(-2.0, 2.0)) = 1.0
+        _MainTex("Main texture", 2D) = "white" {}
+        _DissolveTex("Dissolution texture", 2D) = "black" {}
+        _Step("Step", Range(0.0, 1.0)) = 1.0
+        _Smoothness("Smoothness", Range(0.501, 1.5)) = 1.0
+        _Strength("Strength", Range(-0.5, 0.5)) = 0.5
     }
  
     SubShader
     {
- 
         Tags
         {
             "Queue"="Geometry"
@@ -18,6 +19,8 @@ Shader "Custom/Burning"
         Pass
         {
             CGPROGRAM
+
+            #pragma multi_compile_instancing
 
             #pragma vertex vert
             #pragma fragment frag
@@ -28,6 +31,8 @@ Shader "Custom/Burning"
             float4 _MainTex_ST;
             sampler2D _DissolveTex;
             float _Strength;
+            float _Step;
+            float _Smoothness;
  
             struct v2f
             {
@@ -45,16 +50,15 @@ Shader "Custom/Burning"
                 return o;
             }
  
-            fixed4 frag(v2f i) : SV_Target
+            float4 frag(v2f i) : SV_Target
             {
-                fixed4 c = tex2D(_MainTex, i.uv);
-                float col = max(c.r, max(c.g, c.b));
-                c.rgb = clamp(col + float3(0.1, 0.09, 0.06), float3(0.0, 0.0, 0.0), float3(0.7, 0.7, 0.7));
+                float4 c = tex2D(_MainTex, i.uv);
+                float col = 1.0 - (c.r + c.g + c.b) / 3.0;
+                float4 inv = float4(col, col, col, c.a);
 
-                fixed4 inv = fixed4(1.0 - c.rgb, c.a);
-                fixed4 val = tex2D(_DissolveTex, i.uv);
+                float4 val = tex2D(_DissolveTex, i.uv) * _Step;
 
-                return lerp(inv, c, fixed4(val.rgb, 1.0) + _Strength);
+                return lerp(inv, c, smoothstep(_Strength, _Smoothness, float4(val.rgb, 1.0) - _Strength));
             }
  
             ENDCG
